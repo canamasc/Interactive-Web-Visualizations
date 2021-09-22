@@ -1,124 +1,23 @@
 
-// console.log(data)
-// var indivguy = "940";
-// // Individual 904 will be default 
-// function defaultIndividual(indiv){
-//   return indiv.id === indivguy;
-// }
-
-// // Initialize page
-// function init() {
-  
-//   let samples1 = data.samples;
-//   let defau = samples1.filter(defaultIndividual);
-//    console.log(defau.slice(0));
-//   let topTenDefOTU = defau.slice(0)[0]
-//  // console.log(topTenDefOTU);
-//   slicedx = topTenDefOTU.sample_values.slice(0,10).reverse();
-//   //console.log(slicedx);
-
-//   slicedy = (topTenDefOTU.otu_ids.slice(0,10)).map(String).reverse();
-//   slicedz = topTenDefOTU.otu_labels.slice(0,10).reverse();
-//   let meep = slicedx.map((x,i) => ({x, y: 'OTU ' + slicedy[i], z:slicedz[i]}));
-
-//  // console.log(meep)
-//   let trace1 = {
-//     x: meep.map(object => object.x),
-//     y: meep.map(object => object.y),
-//     text: meep.map(object => object.z),
-//     name: "OTUs",
-//     type: "bar",
-//     orientation: "h"
-//   };
-
-//   let traceData = [trace1];
-
-//   let layout = {
-//     title: "Top 10 OTUs by Individual",
-//     width: 500,
-//     height: 600,
-//     margin: {
-//     l: 150,
-//     r: 100,
-//     t: 50,
-//     b: 50
-//     }
-//   };
-  
-//   Plotly.newPlot("plot", traceData, layout);
-  
-// }
-
-
-// // update plot when there is change to DOM
-// d3.selectAll("#selDataset").on("change", updatePlotly);
-
-// function updatePlotly(){
-//   var dropdwn = d3.select("#selDataset");
-//   var dataset = dropdwn.property("value");
-
-//   let samples1 = data.samples;
-//   indivguy = dataset;
-//   let defau = samples1.filter(defaultIndividual, dataset);
-//   // console.log(defau.slice(0));
-//   let topTenDefOTU = defau.slice(0)[0]
-//  // console.log(topTenDefOTU);
-//   slicedx = topTenDefOTU.sample_values.slice(0,10).reverse();
-//   //console.log(slicedx);
-
-//   slicedy = (topTenDefOTU.otu_ids.slice(0,10)).map(String).reverse();
-//   slicedz = topTenDefOTU.otu_labels.slice(0,10).reverse();
-// //   let meep = slicedx.map((x,i) => ({x, y: 'OTU ' + slicedy[i], z:slicedz[i]}));
-
-// //  // console.log(meep)
-// //   let trace1 = {
-// //     x: meep.map(object => object.x),
-// //     y: meep.map(object => object.y),
-// //     text: meep.map(object => object.z),
-// //     name: "OTUs",
-// //     type: "bar",
-// //     orientation: "h"
-// //   };
-
-// //   let traceData = [trace1];
-
-// //   let layout = {
-// //     title: "Top 10 OTUs by Individual",
-// //     width: 500,
-// //     height: 600,
-// //     margin: {
-// //     l: 150,
-// //     r: 100,
-// //     t: 50,
-// //     b: 50
-
-
-//     // }
-
-//     Plotly.restyle("plot", "x", [slicedx]);
-//     Plotly.restyle("plot", "y", [slicedy]);
-//     Plotly.restyle("plot", "text", [slicedz]);
-//   // };
-
-
-
-// }
-
-// init();
-
+// q: how to make prettier
+// q: how to deploy
 
 // Start with bar chart
 function barGraph(individual){
   let samples1 = data.samples;
+  // filter data for specific individual id
   let defau = samples1.filter(indiv => indiv.id === individual);
   //console.log(defau);
   //console.log(defau[0].sample_values);
+
+  // get needed fields
   let otuids = defau[0].otu_ids.slice(0,10).reverse();
   let otulabels = defau[0].otu_labels.slice(0,10).reverse();
   let samps = defau[0].sample_values.slice(0,10).reverse();
 
+  // map into dictionary object so we can plot
   let meep = samps.map((x,i) => ({x, y: 'OTU ' + otuids[i], z:otulabels[i]}));
-  console.log(meep);
+ // console.log(meep);
 
   let trace1 = {
         x: meep.map(object => object.x),
@@ -143,6 +42,8 @@ function barGraph(individual){
 
 // Make bubble chart
 function bubble(individual){
+
+  // filter for individual 
   let samples1 = data.samples;
   let defau = samples1.filter(indiv => indiv.id === individual);
   let otuids = defau[0].otu_ids;
@@ -163,7 +64,6 @@ function bubble(individual){
   let traceData = [trace1];
     
   let layout = {
-       showlegend:false,
         width: 1100,
         height: 600,
         xaxis: {title: "OTU ID"}
@@ -175,23 +75,54 @@ function bubble(individual){
 
 // fill in demo card
 function demoCard(individual){
+
+  // filter for individual
   let meta = data.metadata;
   let meta1 = meta.filter(indiv => indiv.id == individual);
-  console.log(meta1);
+ // console.log(meta1);
 
+ // fill in sample-metadata id from HTML
   tofill = d3.select("#sample-metadata");
   // Clear it
   tofill.html("");
   console.log(meta1[0]);
+
+  // loop through array
   // https://stackoverflow.com/questions/684672/how-do-i-loop-through-or-enumerate-a-javascript-object
   for (var key of Object.keys(meta1[0])){
-    console.log(key)
-    console.log(meta1[0][key]);
-    tofill.append("h6").text(key + ": " + String(meta1[0][key]));
+   // console.log(key)
+    //console.log(meta1[0][key]);
+
+    // append all desired metadata fields to HTML 
+    tofill.append("h5").text(key + ": " + String(meta1[0][key]));
   }
 }
 
+// initialize
+function init(){
+  names = data.names;
+ // console.log(names);
 
-bubble("940");
-barGraph("940");
-demoCard("940");
+ // fill in dropdown object with names
+  var choice = d3.select("#selDataset");
+
+  for (var key of Object.keys(names)){
+    console.log(names[key]);
+    choice.append("option").text(names[key]);
+  }
+
+  // initialize with first id
+  bubble(names[0]);
+  barGraph(names[0]);
+  demoCard(names[0]);
+}
+
+function optionChanged(individual){
+  // can pass id from dropdown directly to chart functions
+  bubble(individual);
+  barGraph(individual);
+  demoCard(individual);
+}
+
+
+init();
